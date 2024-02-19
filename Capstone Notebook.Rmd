@@ -1,0 +1,137 @@
+---
+title: "Capstone R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(Synth)
+library(LowRankQP)
+library(conflicted)
+library(dplyr)
+library(rvest)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(viridis)
+library(hrbrthemes)
+library(googlesheets4)
+library(skimr)
+library(kableExtra)
+library(ggthemes)
+library(stargazer)
+```
+
+
+```{r}
+```
+
+
+```{r}
+library(kableExtra)
+```
+
+
+```{r}
+link <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-8yfjgb7JFa_q4MvpU0vqtE6dnLR2veB8B-XZq-SzVUQKft1Wu05uCMalln9eCjD6Jc4IrRyZPqtn/pub?output=csv"
+data <- read.csv(link, header=TRUE)
+data
+```
+```{r}
+# Load required libraries
+library(Synth)
+
+# Your data (replace 'd' with your actual data frame)
+data <- read.csv("/Users/daianabesterekova/Downloads/Copy of CP Datasets  - total_dataset.csv")
+
+# Define the treated unit, donor pool, and treated year
+treated_unit <- 7  # Replace with the name/code of Poland in your dataset
+# Review and adjust any country_removed variables if necessary
+
+# Create the donor pool while excluding the country to be removed
+donor_pool <- unique(data$country[data$region != treated_unit])
+
+# Pretend the intervention happened in 2014 (placebo test)
+pretend_treated_year <- 2014
+
+# Review and adjust the selection of covariate variables
+covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop")]
+column_datatype <- class(data$region)
+
+dataprep_out <- dataprep(
+  foo = data,
+  predictors = c("migration", "gdp", "inf", "pop"),  # Review and adjust the predictors
+  dependent = "migration",  # Verify that the outcome variable is correctly specified
+  unit.variable = "region",  # Verify the variable representing countries/regions
+  time.variable = "year",
+  treatment.identifier = treated_unit,
+  controls.identifier = donor_pool,
+  time.predictors.prior = 2000:2014,  # Adjust the time range for the placebo test
+  time.optimize.ssr = 2000:2014,  # Adjust the time range for the placebo test
+  unit.names.variable = "country",
+  time.plot = 2000:2020,  # Adjust the time range for the placebo test
+)
+
+synth_out <- synth(dataprep_out)
+print(synth_out)
+```
+
+
+```{r}
+path.plot(synth.res = synth_out,
+          dataprep.res = dataprep_out,
+          tr.intake = 2014,
+          Ylab = "Migration",
+          Xlab = "Year",
+          Legend = c("Poland", "Synthetic Poland"),
+          Main = "Poland vs Synthetic Poland" ,
+          Ylim = c(0,500000)
+          )
+```
+
+```{r}
+ gaps.plot(synth.res = synth_out,
+          dataprep.res = dataprep_out,
+          tr.intake = 2014,
+          Ylab = "Effect",
+          Xlab = "Year",
+          Main = " Gap between migration flow in Poland and its synthetic version")
+```
+```{r}
+gaps <- dataprep_out$Y1plot - (dataprep_out$Y0plot %*% synth_out$solution.w)
+
+donor_weights <- synth_out$solution.w
+donor_names <- donor_pool
+
+# Create a data frame with weights, names, and spacing
+donor_data <- data.frame(Weights = donor_weights, Country = donor_names)
+
+# Use stargazer to display the data frame
+library(stargazer)
+stargazer(donor_data, type = "text", summary = FALSE)
+```
+
+
+```{r}
+synth_tables <- synth.tab(dataprep.res = dataprep_out, synth.res = synth_out)
+
+synth_tables[1:2]
+# Names of the generated tables
+table_names <- names(synth_tables)
+synth.tables$tab.pred
+
+```
+```{r}
+
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
