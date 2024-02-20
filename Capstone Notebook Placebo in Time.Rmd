@@ -34,6 +34,9 @@ data
 # Load required libraries
 library(Synth)
 
+# Your data (replace 'd' with your actual data frame)
+data <- read.csv("/Users/daianabesterekova/Downloads/Copy of CP Datasets  - total_dataset.csv")
+
 # Define the treated unit, donor pool, and treated year
 treated_unit <- 7  # Replace with the name/code of Poland in your dataset
 # Review and adjust any country_removed variables if necessary
@@ -65,6 +68,7 @@ dataprep_out <- dataprep(
 synth_out <- synth(dataprep_out)
 print(synth_out)
 ```
+
 ```{r echo=TRUE}
 path.plot(synth.res = synth_out,
           dataprep.res = dataprep_out,
@@ -100,7 +104,6 @@ library(stargazer)
 stargazer(donor_data, type = "text", summary = FALSE)
 ```
 
-
 ```{r echo=TRUE}
 synth_tables <- synth.tab(dataprep.res = dataprep_out, synth.res = synth_out)
 
@@ -111,31 +114,8 @@ synth.tables$tab.pred
 
 ```
 
-
-## Placebo Test In Space
-
 ```{r}
-if (!requireNamespace("remotes", quietly = TRUE)) {
-  install.packages("remotes")
-}
 
-# Install SCtools package from GitHub
-remotes::install_github("bcastanho/SCtools")
-
-# Load SCtools package
-```
-
-```{r}
-library(SCtools)
-```
-
-```{r}
-placebo <- generate.placebos(dataprep_out,synth_out)
-```
-
-```{r}
-p <- plot_placebos(placebo,discard.extreme=TRUE, mspe.limit=10, xlab='Year')
-p
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
