@@ -3,6 +3,8 @@ title: "Capstone R Notebook"
 output: html_notebook
 ---
 
+
+
 ```{r}
 library(Synth)
 library(LowRankQP)
@@ -66,7 +68,6 @@ dataprep_out <- dataprep(
 synth_out <- synth(dataprep_out)
 print(synth_out)
 ```
-
 
 ```{r echo=TRUE}
 path.plot(synth.res = synth_out,
