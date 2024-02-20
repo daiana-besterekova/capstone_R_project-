@@ -44,8 +44,8 @@ treated_unit <- 7  # Replace with the name/code of Poland in your dataset
 # Create the donor pool while excluding the country to be removed
 donor_pool <- unique(data$country[data$region != treated_unit])
 
-# Pretend the intervention happened in 2014 (placebo test)
-pretend_treated_year <- 2014
+# Pretend the intervention happened in 2008 (placebo test)
+pretend_treated_year <- 2008
 
 # Review and adjust the selection of covariate variables
 covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop")]
@@ -59,8 +59,8 @@ dataprep_out <- dataprep(
   time.variable = "year",
   treatment.identifier = treated_unit,
   controls.identifier = donor_pool,
-  time.predictors.prior = 2000:2014,  # Adjust the time range for the placebo test
-  time.optimize.ssr = 2000:2014,  # Adjust the time range for the placebo test
+  time.predictors.prior = 2000:2008,  # Adjust the time range for the placebo test
+  time.optimize.ssr = 2000:2008,  # Adjust the time range for the placebo test
   unit.names.variable = "country",
   time.plot = 2000:2020,  # Adjust the time range for the placebo test
 )
@@ -72,7 +72,7 @@ print(synth_out)
 ```{r echo=TRUE}
 path.plot(synth.res = synth_out,
           dataprep.res = dataprep_out,
-          tr.intake = 2014,
+          tr.intake = 2008,
           Ylab = "Migration",
           Xlab = "Year",
           Legend = c("Poland", "Synthetic Poland"),
@@ -84,7 +84,7 @@ path.plot(synth.res = synth_out,
 ```{r echo=TRUE}
  gaps.plot(synth.res = synth_out,
           dataprep.res = dataprep_out,
-          tr.intake = 2014,
+          tr.intake = 2008,
           Ylab = "Effect",
           Xlab = "Year",
           Main = " Gap between migration flow in Poland and its synthetic version")
@@ -111,10 +111,6 @@ synth_tables[1:2]
 # Names of the generated tables
 table_names <- names(synth_tables)
 synth.tables$tab.pred
-
-```
-
-```{r}
 
 ```
 
