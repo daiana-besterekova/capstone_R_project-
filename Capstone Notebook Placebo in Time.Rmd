@@ -35,7 +35,6 @@ data
 library(Synth)
 
 # Your data (replace 'd' with your actual data frame)
-data <- read.csv("/Users/daianabesterekova/Downloads/Copy of CP Datasets  - total_dataset.csv")
 
 # Define the treated unit, donor pool, and treated year
 treated_unit <- 7  # Replace with the name/code of Poland in your dataset
@@ -48,7 +47,7 @@ donor_pool <- unique(data$country[data$region != treated_unit])
 pretend_treated_year <- 2008
 
 # Review and adjust the selection of covariate variables
-covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop")]
+covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop", "unemp")]
 column_datatype <- class(data$region)
 
 dataprep_out <- dataprep(

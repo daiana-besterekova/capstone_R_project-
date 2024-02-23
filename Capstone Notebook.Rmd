@@ -45,7 +45,7 @@ donor_pool <- unique(data$country[data$region != treated_unit])
 pretend_treated_year <- 2014
 
 # Review and adjust the selection of covariate variables
-covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop")]
+covariate_matrix <- data[data$year < pretend_treated_year, c("gdp", "inf", "pop", "unemp")]
 column_datatype <- class(data$region)
 
 dataprep_out <- dataprep(
@@ -130,13 +130,26 @@ library(SCtools)
 ```
 
 ```{r}
-placebo <- generate.placebos(dataprep_out,synth_out)
+placebo <- generate.placebos(dataprep_out, synth_out, Sigf.ipop = 2, strategy='multicore')
 ```
 
 ```{r}
-p <- plot_placebos(placebo,discard.extreme=TRUE, mspe.limit=10, xlab='Year')
+p <- plot_placebos(placebo,discard.extreme=TRUE, mspe.limit=100, xlab='Year')
 p
 ```
+
+```{r}
+mspe_plot(placebo)
+```
+
+
+```{r}
+# Calculate the p-value
+ratio <- mspe.test(placebo)
+print(ratio$p.val)
+print(ratio$test)
+```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
