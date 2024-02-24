@@ -50,7 +50,7 @@ column_datatype <- class(data$region)
 
 dataprep_out <- dataprep(
   foo = data,
-  predictors = c("migration", "gdp", "inf", "pop"),  # Review and adjust the predictors
+  predictors = c("migration", "gdp", "inf", "pop", "unemp"),  # Review and adjust the predictors
   dependent = "migration",  # Verify that the outcome variable is correctly specified
   unit.variable = "region",  # Verify the variable representing countries/regions
   time.variable = "year",
@@ -87,6 +87,10 @@ path.plot(synth.res = synth_out,
 ```
 
 ```{r}
+mean(gaps[16:21])
+```
+
+```{r}
 gaps <- dataprep_out$Y1plot - (dataprep_out$Y0plot %*% synth_out$solution.w)
 
 donor_weights <- synth_out$solution.w
@@ -104,10 +108,10 @@ stargazer(donor_data, type = "text", summary = FALSE)
 ```{r echo=TRUE}
 synth_tables <- synth.tab(dataprep.res = dataprep_out, synth.res = synth_out)
 
-synth_tables[1:2]
+synth_tables[1:3]
 # Names of the generated tables
-table_names <- names(synth_tables)
-synth.tables$tab.pred
+#table_names <- names(synth_tables)
+#synth.tables$tab.pred
 
 ```
 
@@ -134,7 +138,7 @@ placebo <- generate.placebos(dataprep_out, synth_out, Sigf.ipop = 2, strategy='m
 ```
 
 ```{r}
-p <- plot_placebos(placebo,discard.extreme=TRUE, mspe.limit=100, xlab='Year')
+p <- plot_placebos(placebo,discard.extreme=TRUE, mspe.limit=10, xlab='Year')
 p
 ```
 
